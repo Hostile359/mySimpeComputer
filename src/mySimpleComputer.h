@@ -1,13 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define OV 0 //OPERATION_OVERFLOW
+#define D0 1 //DIVIDE_BY_0
+#define OM 2 //OUT_OF_MEMORY
+#define IG 3 //IGNORE_IMPULSE
+#define UC 4 //UNKNOWN_COMMAND
+
 enum{
 	OK = 1,
 	ERROR = -1,
-	N = 100
+	N = 100,
+	NC = 39
 };
 
+
+
 int arr[N];
+
+int flag;
 
 int sc_memoryInit();
 
