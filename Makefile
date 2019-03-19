@@ -17,13 +17,13 @@ build/main.o: src/main.c build
 	$(CC) $(CFLAGS) -o build/main.o -c src/main.c
 
 build:
-	mkdir build
+	mkdir -p build
 
 bin:
-	mkdir bin
+	mkdir -p bin
 
 res:
-	mkdir resources
+	mkdir -p resources
 	touch resources/output.bin
 	
 clean :
