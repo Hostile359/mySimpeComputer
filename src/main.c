@@ -1,5 +1,5 @@
 #include "mySimpleComputer.h"
-#include "myTerm.h"
+#include "myBigChars.h"
 
 void print_log(int result);
 void sc_memoryPrint();
@@ -8,7 +8,7 @@ void print_term();
 
 int main()
 {
-	printf("Choose lab: ");
+	/*printf("Choose lab: ");
 	int a;
 	scanf("%d", &a);
 	
@@ -128,7 +128,23 @@ int main()
 			}else if(a == 6)
 				print_term();
 		}
-	}
+	}*/
+	system ("clear");
+	//mt_gotoXY(2, 5);
+	//printf("Успешно!\n\n");
+	int x = 1, y = 1;
+	//bc_box(x, y, 6, 8);
+	int n[2];
+	n[1] = 471999010;
+	n[0] = 572662300;
+	bc_printbigchar(n, x, y, red, green);
+	int check = bc_setbigcharpos (n, 8, 6, 0);
+	if (check == 0) {
+		x = 15;
+		bc_printbigchar(n, x, y, red, green);
+    }
+    int ds = 572662300 | 2;
+    printf("\n\n %d \n", ds);
     return 0;
 }
 
