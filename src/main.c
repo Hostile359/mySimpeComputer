@@ -132,7 +132,7 @@ int main()
 	system ("clear");
 	//mt_gotoXY(2, 5);
 	//printf("Успешно!\n\n");
-	int x = 1, y = 1;
+	/*int x = 1, y = 1;
 	//bc_box(x, y, 6, 8);
 	int n[2];
 	n[1] = 471999010;
@@ -143,8 +143,10 @@ int main()
 		x = 15;
 		bc_printbigchar(n, x, y, red, green);
     }
-    int ds = 572662300 | 2;
-    printf("\n\n %d \n", ds);
+    int v;
+    bc_getbigcharpos (n, 1, 1, &v);
+    printf("\n\n %d \n", v);*/
+    print_term();
     return 0;
 }
 
@@ -181,23 +183,82 @@ void print_term()
 {
 	sc_memoryInit();
 	sc_regInit();
-	
-	printf("Memory\n");
+	bc_box(1, 1, 12, 63);//ячейки
+	mt_gotoXY(1, 27);
+	printf("Memory");
+	mt_gotoXY(2, 2);
     for (int i = 0; i < 10; i++)
     {
+		mt_gotoXY(i + 2, 2);
         for (int j = 0; j < 10; j++)
         {
             printf(" +%.4d", arr[i * 10 + j]);
         }
-        printf("\n");
+        //printf("\n");
     }
-    printf("\n");
+    //printf("\n");
+	
+	bc_box(1, 64, 3, 22);//правая таб 1
+	mt_gotoXY(1, 69);
+    printf("accumulator");
+    mt_gotoXY(2, 70);
+    printf("+9999");
+    
+    bc_box(4, 64, 3, 22);//правая таб 2
+    mt_gotoXY(4, 66);
+    printf("instructionCounter");
+    mt_gotoXY(5, 70);
+    printf("+0000");
+    
+    bc_box(7, 64, 3, 22);//правая таб 3
+    mt_gotoXY(7, 69);
+    printf("Operation");
+    mt_gotoXY(8, 70);
+    printf("+00 : 00");
+    
+	bc_box(10, 64, 3, 22);//правая таб 4
+	mt_gotoXY(10, 69);
+    printf("Flags");
+    mt_gotoXY(11, 70);
+    printf("O E V M");
+    //printf("%x", flag);
+    
+    int bc[2];
+	bc_box(13, 1, 10, 52);//big char
+	bc[0] = plus_top;
+	bc[1] = plus_bot;
+    mt_gotoXY(14, 2);
+    bc_printbigchar(bc, 14, 3, red, green);
+    bc[0] = one_top;
+	bc[1] = one_bot;
+ 
+    bc_printbigchar(bc, 14, 13, red, green);
 
-    printf("accumulator\n+9999\n\n");
-    printf("instructionCounter\n+0000\n\n");
-    printf("Operation\n+00 : 00\n\n");
-    printf("Flags\n%x\n\n", flag);
+    bc_printbigchar(bc, 14, 23, red, green);
 
-    printf("Keys:\nl  - load\ns  - save\nr  - run\nt  - step\ni  - reset\nF5 - accumulator\nF6 - instructionCounter\n\n");
+    bc_printbigchar(bc, 14, 33, red, green);
+    
+    bc_printbigchar(bc, 14, 43, red, green);
+    
+    bc_box(13, 53, 10, 33);//таблица keys
+    mt_gotoXY(13, 55);
+    printf("Keys:");
+    mt_gotoXY(14, 54);
+    printf("l  - load");
+    mt_gotoXY(15, 54);
+    printf("s  - save");
+    mt_gotoXY(16, 54);
+    printf("r  - run");
+    mt_gotoXY(17, 54);
+    printf("t  - step");
+    mt_gotoXY(18, 54);
+    printf("i  - reset");
+    mt_gotoXY(19, 54);
+    printf("F5 - accumulator");
+    mt_gotoXY(20, 54);
+    printf("F6 - instructionCounter");
+    
+    mt_gotoXY(24, 1);
+    printf("Input\\Output:\n\n\n");
 }
  
