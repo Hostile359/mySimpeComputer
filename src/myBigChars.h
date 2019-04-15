@@ -1,8 +1,5 @@
 #pragma once
 
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "myTerm.h"
 
 #define REC 'a'
@@ -12,6 +9,13 @@
 #define TL "l"
 #define VERT "x"
 #define HOR "q"
+
+enum BigChar {
+	plus_top = 4279769112,
+	plus_bot = 404232447,
+	one_top = 404626456,
+	one_bot = 4279769112
+};
 
 int bc_printA (char *str);
 int bc_box (int x1, int y1, int x2, int y2);

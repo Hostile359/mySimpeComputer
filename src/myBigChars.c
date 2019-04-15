@@ -61,8 +61,8 @@ int bc_printbigchar(int *a, int x, int y, enum colors c1, enum colors c2)
 		mt_gotoXY(x + i, y);
 		bc_printA(row);
 	}
-	mt_ssetfgcolor(white);
-	mt_ssetbgcolor(black);
+	mt_ssetfgcolor(def);
+	mt_ssetbgcolor(def);
 	return 0;
 }
 
@@ -93,5 +93,51 @@ int bc_setbigcharpos (int *big, int x, int y, int value)
 		big[index] &= ~((value + 1) << (k - 1));
 	printf("\n%d\n\n", big[index]);
 	return 0;
-} 
+}
+
+int bc_getbigcharpos (int *big, int x, int y, int *value)
+{
+	int index;
+	
+	if ((x < 1) || (y < 1) || (x > 8) || (y > 8))
+		return -1;
+	
+	if (x > 4)
+		index = 1;
+	else 
+		index = 0;
+	int k = x * 8 + y;
+	*value = (big[index] >> (k - 1)) & 1;
+	
+	return 0;
+}
+
+int bc_bigcharwrite(int fd, int *big, int count)
+{
+	int err;
+	
+	err = write(fd, &count, sizeof(count));
+	if (err == -1)
+		return -1;
+	err = write(fd, big, count * (sizeof(int)) * 2);
+	if (err == -1)
+		return -1;
+	
+	return 0;
+}
+
+int bc_bigcharread(int fd, int *big, int need_count, int *count)
+{
+	int n, cnt, err;
+	
+	err = read(fd, &n, sizeof(n));
+	if (err == -1 || (err != sizeof(n)))
+		return -1;
+	cnt = read(fd, big, need_count * sizeof(int) * 2);
+	if (cnt == -1)
+		return -1;
+	*count = cnt / (sizeof(int) * 2);
+	
+	return 0;
+}
 	
