@@ -1,8 +1,8 @@
 #include "mySimpleComputer.h"
 
-int commands[NC] = { 10, 11, 20, 21, 30, 31, 32, 33, 40, 41, 42,
-	43, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66,
-	67, 68, 69, 70, 71, 72, 73, 74, 75, 76 };
+int commands[NC] = { 0x10, 0x11, 0x20, 0x21, 0x30, 0x31, 0x32, 0x33, 0x40, 0x41, 0x42,
+	0x43, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66,
+	0x67, 0x68, 0x69, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76 };
 
 int sc_memoryInit()
 {
@@ -129,11 +129,12 @@ int sc_commandDecode(int *command, int *operand, int value)
 		
 	int temp_command, i;
 	temp_command = (value >> 7) & 127;
-	
+	//printf("\n Cjmmand : %d\n\n", temp_command);
 	for (i = 0; i < NC; i++) {
-		if (temp_command == commands[i]) break;
+		if (temp_command == commands[i])
+			break;
 	}
-	
+	//printf("\t%d     %d\n\n", i, NC);
 	if (i == NC) {
 		sc_regSet(UC, 1);
 		return ERROR;
