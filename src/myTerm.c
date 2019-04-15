@@ -10,7 +10,7 @@ int mt_clrscr()
 int mt_gotoXY(int x, int y)
 {
 
-	printf("\E[%d;%dH", y, x);
+	printf("\E[%d;%dH", x, y);
 
 	return 0;
 }
