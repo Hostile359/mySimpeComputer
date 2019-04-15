@@ -14,7 +14,8 @@ enum colors {
 	blue = 4,
 	purple = 5,
 	cyan = 6,
-	white = 7
+	white = 7,
+	def = 9
 };
 
 int mt_clrscr();
