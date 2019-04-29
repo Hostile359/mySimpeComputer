@@ -32,7 +32,19 @@ enum BigChar {
 	nine_top = 4291019775,
 	nine_bot = 4290822336,
 	zero_top = 3284386815,
-	zero_bot = 4291019715
+	zero_bot = 4291019715,
+	a_top = 4291019775,
+	a_bot = 3284386755,
+	b_top = 1069794111,
+	b_bot = 1069794303,
+	c_top = 50529279,
+	c_bot = 4278387459,
+	d_top = 3284386623,
+	d_bot = 1069794243,
+	e_top = 4278387711,
+	e_bot = 4278387711,
+	f_top = 4278387711,
+	f_bot = 50529027
 };
 
 int bc_printA (char *str);
