@@ -1,4 +1,4 @@
-OBJ = build/mySimpleComputer.o build/main.o build/myTerm.o build/myBigChars.o
+OBJ = build/mySimpleComputer.o build/main.o build/myTerm.o build/myBigChars.o build/myReadkey.o
 CC = gcc
 CFLAGS  = -g3 -O0 -Wall -Werror -std=c99
 
@@ -15,6 +15,9 @@ build/myTerm.o: src/myTerm.c build
 	
 build/myBigChars.o: src/myBigChars.c build
 	$(CC) $(CFLAGS) -o build/myBigChars.o -c src/myBigChars.c
+	
+build/myReadkey.o: src/myReadkey.c build
+	$(CC) $(CFLAGS) -o build/myReadkey.o -c src/myReadkey.c
 
 build/main.o: src/main.c build
 	$(CC) $(CFLAGS) -o build/main.o -c src/main.c
