@@ -13,6 +13,7 @@ void print_big(int a);
 int *get_big(int a);
 void do_command(enum keys k);
 void inst_counter();
+void _reset();
 
 int index;
 
@@ -264,7 +265,10 @@ void do_command(enum keys k)
 			printf("t\n");
 			break;
 		case _i:
-			printf("i\n");
+			//printf("i\n");
+			alarm(0);
+			signal(SIGUSR1, _reset);
+			raise (SIGUSR1);
 			break;
 		case _q:
 			printf("q\n");
@@ -322,4 +326,9 @@ void inst_counter()
 {
     instruction_counter++;
     print_term();
+}
+
+void _reset(){
+	sc_memoryInit();
+	sc_regInit();
 }
