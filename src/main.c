@@ -1,152 +1,38 @@
 #include "mySimpleComputer.h"
 #include "myBigChars.h"
+#include "myReadkey.h"
+
+#include <math.h>
+#include <signal.h>
 
 void print_log(int result);
 void sc_memoryPrint();
 void sc_regPrint();
 void print_term();
+void print_big(int a);
+int *get_big(int a);
+void do_command(enum keys k);
+void inst_counter();
+
+int index;
 
 int main()
 {
-	/*printf("Choose lab: ");
-	int a;
-	scanf("%d", &a);
-	
-	if (a == 1) {
-
-		int result = 0, value = 0, command = 0, operand = 0;
-
-		printf("Инициализация массива\n\n");
-		sc_memoryInit();
-		sc_memoryPrint();
-
-		printf("Инициализация регистра\n\n");
-		sc_regInit();
-		sc_regPrint();
-
-
-		printf("Установка значения в заданной ячейке\n");
-		printf("118 в 3\n");
-		result = sc_memorySet(3, 118);
-		print_log(result);
-		sc_memoryPrint();
-		sc_regPrint();
-		sc_regInit();
-		printf("14 в 1\n");
-		result = sc_memorySet(1, 14);
-		print_log(result);
-		sc_memoryPrint();
-		sc_regPrint();
-
-
-		printf("\nОчистка регистра\n\n");
-		sc_regInit();
-		sc_regPrint();
-
-
-		printf("Чтение значения из заданной ячейки\n");
-		printf("Из 3\n");
-		result = sc_memoryGet(3, &value);
-		print_log(result);
-		sc_memoryPrint();
-		sc_regPrint();
-		printf("Value: %d\n\n", value);
-
-		printf("Очистка регистра\n\n");
-		sc_regInit();
-		sc_regPrint();
-
-
-		printf("Запись в файл(\"resources/output.bin\")\n");
-		result = sc_memorySave("resources/output.bin");
-		print_log(result);
-
-
-		printf("Очистка памяти\n\n");
-		sc_memoryInit();
-		sc_memoryPrint();
-
-
-		printf("Чтение из файла(\"resources/input.bin\")\n");
-		result = sc_memoryLoad("resources/output.bin");
-		print_log(result);
-		sc_memoryPrint();
-
-
-		printf("Запись в регистр(1, 1)\n");
-		result = sc_regSet(1, 1);
-		print_log(result);
-		sc_regPrint();
-
-
-		printf("Чтение из регистра (1)\n");
-		result = sc_regGet(1, &value);
-		print_log(result);
-		printf("Значение: %d\n\n", value);
-
-		printf("Очистка регистра\n\n");
-		sc_regInit();
-		sc_regPrint();
-
-
-		printf("Кодирование(0x20, 0x13)\n");
-		result = sc_commandEncode(0x20, 0x13, &value);
-		print_log(result);
-		printf("Число: %d\n\n", value);
-
-
-		printf("Декодирование\n");
-		result = sc_commandDecode(&command, &operand, value);
-		print_log(result);
-		printf("Число: %d\tКоманда: 0x%x\tОперанд: 0x%x\n\n", value, command, operand);
-	}else {
+	sc_memoryInit();
+	sc_regInit();
+	index = 0;
+    enum keys choose;
+    //int check = 0;
+    while(1) {
 		print_term();
-		while (a != 0) {
-			printf("   1-Отчистить терминал, 2-перенести курсор, 3-вывести размер экрана, 4-поменять цвет символов, 5-поменять фон,6-вывести терминал заново\n\n");
-			scanf("%d", &a);
-			if (a == 1)
-				mt_clrscr();
-			else if(a == 2) {
-				printf("введите x и y: ");
-				int x,y;
-				scanf("%d", &x);
-				scanf("%d", &y);
-				mt_gotoXY(x, y);
-			}else if(a == 3) {
-				int rows, cols;
-				mt_getscreensize(&rows, &cols);
-				printf("  Строки: %d, Столбцы: %d\n\n", rows, cols);
-			}else if(a == 4 || a == 5) {
-				printf("Выберите цвет: \n");
-				printf("0-Black, 1-Red, 2-Green, 3-Yellow, 4-Blue, 5-Purple, 6-Cyan, 7-White\n");
-				int col;
-				scanf("%d", &col);
-				if (a == 4)
-					mt_ssetfgcolor(col);
-				else
-					mt_ssetbgcolor(col);
-			}else if(a == 6)
-				print_term();
-		}
-	}*/
-	system ("clear");
-	//mt_gotoXY(2, 5);
-	//printf("Успешно!\n\n");
-	/*int x = 1, y = 1;
-	//bc_box(x, y, 6, 8);
-	int n[2];
-	n[1] = 471999010;
-	n[0] = 572662300;
-	bc_printbigchar(n, x, y, red, green);
-	int check = bc_setbigcharpos (n, 8, 6, 0);
-	if (check == 0) {
-		x = 15;
-		bc_printbigchar(n, x, y, red, green);
-    }
-    int v;
-    bc_getbigcharpos (n, 1, 1, &v);
-    printf("\n\n %d \n", v);*/
-    print_term();
+		//check = 
+		rk_readkey(&choose);
+		//printf("%d\n", check);
+		if(choose == -2)
+			break;
+		do_command(choose);
+	}
+	printf("Goodbye!!!\n\n");
     return 0;
 }
 
@@ -181,8 +67,9 @@ void sc_regPrint()
 
 void print_term()
 {
-	sc_memoryInit();
-	sc_regInit();
+	mt_clrscr();
+	
+	//arr[0] = 0xBDCA;
 	bc_box(1, 1, 12, 63);//ячейки
 	mt_gotoXY(1, 27);
 	printf("Memory");
@@ -192,7 +79,12 @@ void print_term()
 		mt_gotoXY(i + 2, 2);
         for (int j = 0; j < 10; j++)
         {
-            printf(" +%.4d", arr[i * 10 + j]);
+			if(i * 10 + j == index) {
+				mt_ssetbgcolor(cyan);
+				printf(" +%.4x", arr[i * 10 + j]);
+				mt_ssetbgcolor(def);
+			}else
+				printf(" +%.4x", arr[i * 10 + j]);
         }
         //printf("\n");
     }
@@ -208,7 +100,7 @@ void print_term()
     mt_gotoXY(4, 66);
     printf("instructionCounter");
     mt_gotoXY(5, 70);
-    printf("+0000");
+    printf("+%.4d", instruction_counter);
     
     bc_box(7, 64, 3, 22);//правая таб 3
     mt_gotoXY(7, 69);
@@ -223,22 +115,10 @@ void print_term()
     printf("O E V M");
     //printf("%x", flag);
     
-    int bc[2];
-	bc_box(13, 1, 10, 52);//big char
-	bc[0] = plus_top;
-	bc[1] = plus_bot;
-    mt_gotoXY(14, 2);
-    bc_printbigchar(bc, 14, 3, red, green);
-    bc[0] = one_top;
-	bc[1] = one_bot;
- 
-    bc_printbigchar(bc, 14, 13, red, green);
-
-    bc_printbigchar(bc, 14, 23, red, green);
-
-    bc_printbigchar(bc, 14, 33, red, green);
+    //int bc[2];
     
-    bc_printbigchar(bc, 14, 43, red, green);
+	bc_box(13, 1, 10, 52);//big char
+	print_big(arr[index]);
     
     bc_box(13, 53, 10, 33);//таблица keys
     mt_gotoXY(13, 55);
@@ -261,4 +141,185 @@ void print_term()
     mt_gotoXY(24, 1);
     printf("Input\\Output:\n\n\n");
 }
- 
+
+void print_big(int a)//вывод биг чар
+{
+	int bc[2];
+
+	bc[0] = plus_top;
+	bc[1] = plus_bot;
+    mt_gotoXY(14, 2);
+    bc_printbigchar(bc, 14, 3, red, green);
+	int yy = 13;//координата вывода бигчара
+	for(int i = 3; i >= 0; i--, yy+= 10) {
+		//int dig = a / pow(10, 3 - i);
+		//dig %= 10;
+		int *b = NULL;
+		int dig = (a >> (4 * i)) & 0xF;
+		//printf("%x\n", dig);
+		b = get_big(dig);
+		bc_printbigchar(b, 14, yy, red, green);
+    }
+}
+
+int *get_big(int a)//получение цифры бигчара
+{
+	int *arr = malloc(2 * sizeof(int));
+	switch (a) {
+		case 1:
+			arr[0] = one_top;
+			arr[1] = one_bot;
+			break;
+		case 2:
+			arr[0] = two_top;
+			arr[1] = two_bot;
+			break;
+		case 3:
+			arr[0] = three_top;
+			arr[1] = three_bot;
+			break;
+		case 4:
+			arr[0] = four_top;
+			arr[1] = four_bot;
+			break;
+		case 5:
+			arr[0] = five_top;
+			arr[1] = five_bot;
+			break;
+		case 6:
+			arr[0] = six_top;
+			arr[1] = six_bot;
+			break;
+		case 7:
+			arr[0] = seven_top;
+			arr[1] = seven_bot;
+			break;
+		case 8:
+			arr[0] = eight_top;
+			arr[1] = eight_bot;
+			break;
+		case 9:
+			arr[0] = nine_top;
+			arr[1] = nine_bot;
+			break;
+		case 0:
+			arr[0] = zero_top;
+			arr[1] = zero_bot;
+			break;
+		case 10:
+			arr[0] = a_top;
+			arr[1] = a_bot;
+			break;
+		case 11:
+			arr[0] = b_top;
+			arr[1] = b_bot;
+			break;
+		case 12:
+			arr[0] = c_top;
+			arr[1] = c_bot;
+			break;
+		case 13:
+			arr[0] = d_top;
+			arr[1] = d_bot;
+			break;
+		case 14:
+			arr[0] = e_top;
+			arr[1] = e_bot;
+			break;
+		case 15:
+			arr[0] = f_top;
+			arr[1] = f_bot;
+			break;
+		
+	}
+	
+	return arr;
+}
+
+void do_command(enum keys k)
+{
+	int check = 0;
+	char file_name[20];
+	switch (k) {
+		case _l:
+			printf("Enter file name to save RAM in binary file: ");
+			fgets(file_name, 20, stdin);
+			check = sc_memorySave(file_name);
+			if(check != -1)
+				printf("Succsesfully\n\n");
+			break;
+		case _s:
+			printf("Enter file name to load RAM from binary file: ");
+			fgets(file_name, 20, stdin);
+			check = sc_memoryLoad(file_name);
+			if(check != -1)
+				printf("Succsesfully\n\n");
+			break;
+		case _r:
+			//printf("r\n");
+			signal(SIGALRM, inst_counter);
+			alarm(1);
+			break;
+		case _t:
+			printf("t\n");
+			break;
+		case _i:
+			printf("i\n");
+			break;
+		case _q:
+			printf("q\n");
+			break;
+		case F5:
+			printf("f5\n");
+			break;
+		case F6:
+			printf("f6\n");
+			break;
+		case UP:
+			//printf("up\n");
+			if (index - 10 >= 0)
+				index -= 10;
+			else
+				index += 90;
+			break;
+		case DOWN:
+			//printf("down\n");
+			if (index + 10 < 100)
+				index += 10;
+			else
+				index -= 90;
+			break;
+		case LEFT:
+			//printf("left\n");
+			if (index % 10 != 0)
+				index--;
+			else
+				index += 9;
+			break;
+		case RIGHT:
+			//printf("right\n");
+			if (index % 10 != 9)
+				index++;
+			else
+				index -= 9;
+			break;
+		case ENTER:
+			printf("Enter new value: \n");
+			int temp;
+			scanf("%x", &temp);
+			//arr[index] = temp;
+			sc_memorySet(index, temp);
+			
+			break;
+	}
+	//printf("Press any key to continue...");
+	//fflush(stdout);
+	//rk_readkey(&k);
+	return;
+}
+
+void inst_counter()
+{
+    instruction_counter++;
+    print_term();
+}
