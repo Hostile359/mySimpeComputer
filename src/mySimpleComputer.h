@@ -22,6 +22,8 @@ int arr[N];
 
 int flag;
 
+int instruction_counter;
+
 int sc_memoryInit();
 
 int sc_memorySet(int adress, int value);
