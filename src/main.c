@@ -34,6 +34,7 @@ int main()
 		do_command(choose);
 	}
 	printf("Goodbye!!!\n\n");
+	//rk_mytermregime(1, 0, 0, 0, 0)
     return 0;
 }
 
@@ -101,7 +102,7 @@ void print_term()
     mt_gotoXY(4, 66);
     printf("instructionCounter");
     mt_gotoXY(5, 70);
-    printf("+%.4d", instruction_counter);
+    printf("+%.4d", index);
     
     bc_box(7, 64, 3, 22);//правая таб 3
     mt_gotoXY(7, 69);
@@ -240,11 +241,14 @@ int *get_big(int a)//получение цифры бигчара
 void do_command(enum keys k)
 {
 	int check = 0;
-	char file_name[20];
+	char file_name[50];
+	int sl = 0;
 	switch (k) {
 		case _l:
 			printf("Enter file name to save RAM in binary file: ");
 			fgets(file_name, 20, stdin);
+			sl = strlen(file_name);
+			file_name[sl - 1] = '\0';
 			check = sc_memorySave(file_name);
 			if(check != -1)
 				printf("Succsesfully\n\n");
@@ -252,6 +256,8 @@ void do_command(enum keys k)
 		case _s:
 			printf("Enter file name to load RAM from binary file: ");
 			fgets(file_name, 20, stdin);
+			sl = strlen(file_name);
+			file_name[sl - 1] = '\0';
 			check = sc_memoryLoad(file_name);
 			if(check != -1)
 				printf("Succsesfully\n\n");
@@ -266,7 +272,6 @@ void do_command(enum keys k)
 			break;
 		case _i:
 			//printf("i\n");
-			alarm(0);
 			signal(SIGUSR1, _reset);
 			raise (SIGUSR1);
 			break;
@@ -277,7 +282,15 @@ void do_command(enum keys k)
 			printf("f5\n");
 			break;
 		case F6:
-			printf("f6\n");
+			printf("Enter new index: ");
+			int in_c;
+			scanf("%d", &in_c);
+			while(in_c >= N || in_c < 0) {
+				printf("Out of mem, try again\n");
+				printf("Enter new index: ");
+				scanf("%d", &in_c);
+			}
+			index = in_c;
 			break;
 		case UP:
 			//printf("up\n");
@@ -324,7 +337,10 @@ void do_command(enum keys k)
 
 void inst_counter()
 {
-    instruction_counter++;
+	if(index < N - 1)
+		index++;
+	else
+		alarm(0);
     print_term();
 }
 
