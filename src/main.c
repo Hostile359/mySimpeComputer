@@ -4,6 +4,7 @@
 
 #include <math.h>
 #include <signal.h>
+#include <sys/time.h>
 
 void print_log(int result);
 void sc_memoryPrint();
@@ -27,6 +28,7 @@ int main()
     while(1) {
 		print_term();
 		//check = 
+		//fflush(stdin);
 		rk_readkey(&choose);
 		//printf("%d\n", check);
 		if(choose == -2)
@@ -243,6 +245,9 @@ void do_command(enum keys k)
 	int check = 0;
 	char file_name[50];
 	int sl = 0;
+	struct termios termios_p;
+	struct itimerval nval, oval;
+	
 	switch (k) {
 		case _l:
 			printf("Enter file name to save RAM in binary file: ");
@@ -264,8 +269,46 @@ void do_command(enum keys k)
 			break;
 		case _r:
 			//printf("r\n");
+			/*signal(SIGALRM, inst_counter);
+			alarm(1);*/
+
+			tcgetattr(STDIN_FILENO, &termios_p);
+
+
+			rk_mytermrergtime(0, 0, 0, 0, 0);
+
 			signal(SIGALRM, inst_counter);
-			alarm(1);
+
+			nval.it_interval.tv_sec = 1;
+			nval.it_interval.tv_usec = 0;
+			nval.it_value.tv_sec = 1;
+			nval.it_value.tv_usec = 0;
+
+			setitimer(ITIMER_REAL, &nval, &oval);
+
+			while(1) {
+				if (index >= N - 1) {
+					nval.it_interval.tv_sec = 0;
+					nval.it_interval.tv_usec = 0;
+					nval.it_value.tv_sec = 0;
+					nval.it_value.tv_usec = 0;
+
+					setitimer(ITIMER_REAL, &nval, &oval); //Сброс таймера
+
+					break;
+				}
+				//Каждый сигнал, генерируемый setitimer'ом уникален и требует предварительно повторного вызова signal
+				signal(SIGALRM, inst_counter);
+				pause();
+			}
+			
+			//rk_mytermrergtime(0, 1, 0, 0, 1);
+			
+			tcsetattr(STDIN_FILENO, TCSAFLUSH, &termios_p);
+			
+			//enum keys _temp;
+			//rk_readkey(&_temp);
+			//fflush(stdin);
 			break;
 		case _t:
 			printf("t\n");
@@ -337,14 +380,13 @@ void do_command(enum keys k)
 
 void inst_counter()
 {
-	if(index < N - 1)
-		index++;
-	else
-		alarm(0);
+	index++;
+	
     print_term();
 }
 
 void _reset(){
 	sc_memoryInit();
 	sc_regInit();
+	index = 0;
 }
