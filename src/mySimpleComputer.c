@@ -96,7 +96,7 @@ int sc_regGet(int registr, int *value)
 	if (registr < 0 || registr > 4)
 		return ERROR;
 	
-	*value = flag >> registr;
+	*value = (flag >> registr) & 1;
 	
 	return OK;
 }
