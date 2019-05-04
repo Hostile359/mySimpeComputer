@@ -17,12 +17,28 @@ void inst_counter();
 void _reset();
 
 int index;
+int value[5] = { 0 };
 
 int main()
 {
 	sc_memoryInit();
 	sc_regInit();
 	index = 0;
+	//sc_regSet(UC, 1);
+	/*for(int i = 0; i < 5; i++)
+		printf("%d ", value[i]);
+	printf("\n ");
+	//value[5] = { 0 };
+	sc_regSet(IG, 1);
+	sc_regGet(OV, &value[0]);
+    sc_regGet(D0, &value[1]);
+    sc_regGet(OM, &value[2]);
+    sc_regGet(IG, &value[3]);
+    sc_regGet(UC, &value[4]);
+    for(int i = 0; i < 5; i++)
+		printf("%d ", value[i]);
+	sc_regPrint();
+	pause();*/
     enum keys choose;
     //int check = 0;
     while(1) {
@@ -115,8 +131,53 @@ void print_term()
 	bc_box(10, 64, 3, 22);//правая таб 4
 	mt_gotoXY(10, 69);
     printf("Flags");
-    mt_gotoXY(11, 70);
-    printf("O E V M");
+    mt_gotoXY(11, 68);
+    sc_regGet(OV, &value[0]);
+    sc_regGet(D0, &value[1]);
+    sc_regGet(OM, &value[2]);
+    sc_regGet(IG, &value[3]);
+    sc_regGet(UC, &value[4]);
+    
+    if(value[0] == 0)
+		printf("OV");
+	else {
+		mt_ssetbgcolor(red);
+		printf("OV");
+		mt_ssetbgcolor(def);
+	}
+	printf(" ");
+	if(value[1] == 0)
+		printf("D0");
+	else {
+		mt_ssetbgcolor(red);
+		printf("D0");
+		mt_ssetbgcolor(def);
+	}
+	printf(" ");
+	if(value[2] == 0)
+		printf("OM");
+	else {
+		mt_ssetbgcolor(red);
+		printf("OM");
+		mt_ssetbgcolor(def);
+	}
+	printf(" ");
+	if(value[3] == 0)
+		printf("IG");
+	else {
+		mt_ssetbgcolor(red);
+		printf("IG");
+		mt_ssetbgcolor(def);
+	}
+	printf(" ");
+	if(value[4] == 0)
+		printf("UC");
+	else {
+		mt_ssetbgcolor(red);
+		printf("UC");
+		mt_ssetbgcolor(def);
+	}
+    //printf("O E V M");
     //printf("%x", flag);
     
     //int bc[2];
@@ -272,43 +333,45 @@ void do_command(enum keys k)
 			/*signal(SIGALRM, inst_counter);
 			alarm(1);*/
 
-			tcgetattr(STDIN_FILENO, &termios_p);
+			if(value[3] == 0) {
+				tcgetattr(STDIN_FILENO, &termios_p);
 
 
-			rk_mytermrergtime(0, 0, 0, 0, 0);
+				rk_mytermrergtime(0, 0, 0, 0, 0);
 
-			signal(SIGALRM, inst_counter);
-
-			nval.it_interval.tv_sec = 1;
-			nval.it_interval.tv_usec = 0;
-			nval.it_value.tv_sec = 1;
-			nval.it_value.tv_usec = 0;
-
-			setitimer(ITIMER_REAL, &nval, &oval);
-
-			while(1) {
-				if (index >= N - 1) {
-					nval.it_interval.tv_sec = 0;
-					nval.it_interval.tv_usec = 0;
-					nval.it_value.tv_sec = 0;
-					nval.it_value.tv_usec = 0;
-
-					setitimer(ITIMER_REAL, &nval, &oval); //Сброс таймера
-
-					break;
-				}
-				//Каждый сигнал, генерируемый setitimer'ом уникален и требует предварительно повторного вызова signal
 				signal(SIGALRM, inst_counter);
-				pause();
+
+				nval.it_interval.tv_sec = 1;
+				nval.it_interval.tv_usec = 0;
+				nval.it_value.tv_sec = 1;
+				nval.it_value.tv_usec = 0;
+
+				setitimer(ITIMER_REAL, &nval, &oval);
+
+				while(1) {
+					if (index >= N - 1) {
+						nval.it_interval.tv_sec = 0;
+						nval.it_interval.tv_usec = 0;
+						nval.it_value.tv_sec = 0;
+						nval.it_value.tv_usec = 0;
+
+						setitimer(ITIMER_REAL, &nval, &oval); //Сброс таймера
+
+						break;
+					}
+					//Каждый сигнал, генерируемый setitimer'ом уникален и требует предварительно повторного вызова signal
+					signal(SIGALRM, inst_counter);
+					pause();
+				}
+				
+				//rk_mytermrergtime(0, 1, 0, 0, 1);
+				
+				tcsetattr(STDIN_FILENO, TCSAFLUSH, &termios_p);
+				
+				//enum keys _temp;
+				//rk_readkey(&_temp);
+				//fflush(stdin);
 			}
-			
-			//rk_mytermrergtime(0, 1, 0, 0, 1);
-			
-			tcsetattr(STDIN_FILENO, TCSAFLUSH, &termios_p);
-			
-			//enum keys _temp;
-			//rk_readkey(&_temp);
-			//fflush(stdin);
 			break;
 		case _t:
 			printf("t\n");
