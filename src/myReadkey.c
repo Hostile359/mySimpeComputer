@@ -1,6 +1,6 @@
 #include "myReadkey.h"
 
-int rk_mytermregime(int regime, int vtime, int vmin, int echo, int sigint)
+int rk_mytermrergtime(int regime, int vtime, int vmin, int echo, int sigint)
 {
 	struct termios options;
 	
@@ -47,7 +47,7 @@ int rk_readkey(enum keys *key)
 	if (tcgetattr(STDIN_FILENO, &orig_options) != 0)
 		return -1;
 		
-	if (rk_mytermregime(0, 0, 1, 0, 1) != 0)
+	if (rk_mytermrergtime(0, 0, 1, 0, 1) != 0)
 		return -1;
 		
 	num_read = read(STDIN_FILENO, buf, 15);
