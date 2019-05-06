@@ -349,6 +349,8 @@ void do_command(enum keys k)
 				setitimer(ITIMER_REAL, &nval, &oval);
 
 				while(1) {
+					if(value[3] != 0)
+						break;
 					if (index >= N - 1) {
 						nval.it_interval.tv_sec = 0;
 						nval.it_interval.tv_usec = 0;
@@ -452,4 +454,6 @@ void _reset(){
 	sc_memoryInit();
 	sc_regInit();
 	index = 0;
+	value[5] = { 0 };
+	value[3] = 1;
 }
