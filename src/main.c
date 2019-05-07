@@ -24,6 +24,7 @@ int main()
 	sc_memoryInit();
 	sc_regInit();
 	index = 0;
+	value[3] = 1;
 	//sc_regSet(UC, 1);
 	/*for(int i = 0; i < 5; i++)
 		printf("%d ", value[i]);
@@ -135,7 +136,7 @@ void print_term()
     sc_regGet(OV, &value[0]);
     sc_regGet(D0, &value[1]);
     sc_regGet(OM, &value[2]);
-    sc_regGet(IG, &value[3]);
+    //sc_regGet(IG, &value[3]);
     sc_regGet(UC, &value[4]);
     
     if(value[0] == 0)
@@ -333,7 +334,7 @@ void do_command(enum keys k)
 			/*signal(SIGALRM, inst_counter);
 			alarm(1);*/
 
-			if(value[3] == 0) {
+				value[3] = 0;
 				tcgetattr(STDIN_FILENO, &termios_p);
 
 
@@ -352,18 +353,29 @@ void do_command(enum keys k)
 					if(value[3] != 0)
 						break;
 					if (index >= N - 1) {
-						nval.it_interval.tv_sec = 0;
+						alarm(0);
+						/*nval.it_interval.tv_sec = 0;
 						nval.it_interval.tv_usec = 0;
 						nval.it_value.tv_sec = 0;
 						nval.it_value.tv_usec = 0;
 
 						setitimer(ITIMER_REAL, &nval, &oval); //Сброс таймера
-
+						*/
+						
 						break;
 					}
 					//Каждый сигнал, генерируемый setitimer'ом уникален и требует предварительно повторного вызова signal
 					signal(SIGALRM, inst_counter);
-					pause();
+					
+					enum keys _temp;
+					rk_readkey(&_temp);
+					if(_temp == _i) {
+						alarm(0);
+						signal(SIGUSR1, _reset);
+						raise (SIGUSR1);
+					}
+					
+					//pause();
 				}
 				
 				//rk_mytermrergtime(0, 1, 0, 0, 1);
@@ -373,13 +385,14 @@ void do_command(enum keys k)
 				//enum keys _temp;
 				//rk_readkey(&_temp);
 				//fflush(stdin);
-			}
+			
 			break;
 		case _t:
 			printf("t\n");
 			break;
 		case _i:
 			//printf("i\n");
+			alarm(0);
 			signal(SIGUSR1, _reset);
 			raise (SIGUSR1);
 			break;
@@ -454,6 +467,10 @@ void _reset(){
 	sc_memoryInit();
 	sc_regInit();
 	index = 0;
-	value[5] = { 0 };
+	value[0] = 0;
+	value[1] = 0;
+	value[2] = 0;
 	value[3] = 1;
+	value[4] = 0;
+	//value[3] = 1;
 }
