@@ -366,7 +366,7 @@ void do_command(enum keys k)
 					}
 					//Каждый сигнал, генерируемый setitimer'ом уникален и требует предварительно повторного вызова signal
 					signal(SIGALRM, inst_counter);
-					safsdg
+					
 					
 					enum keys _temp;
 					rk_readkey(&_temp);
