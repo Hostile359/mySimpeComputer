@@ -3,8 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <fcntl.h>
+//#include <fcntl.h>
 #include <sys/ioctl.h>
+#include <termios.h>
 
 enum colors {
 	black = 0,

@@ -19,8 +19,10 @@ int sc_memorySet(int adress, int value)
 		sc_regSet(OM, 1);
 		return ERROR;
 	}
-	else
+	else {
 		arr[adress] = value;
+		sc_regSet(OM, 0);
+	}
 		
 	return OK;
 }
@@ -31,8 +33,10 @@ int sc_memoryGet(int adress, int *value)
 		sc_regSet(OM, 1);
 		return ERROR;
 	}
-	else
+	else {
 		*value = arr[adress];
+		sc_regSet(OM, 0);
+	}
 		
 	return OK;
 }
@@ -115,7 +119,7 @@ int sc_commandEncode(int command, int operand, int *value)
 		return ERROR;	
 	}
 	
-	command <<= 7;
+	command <<= 8;
 	command |= operand;
 	*value = command;
 	
@@ -128,7 +132,7 @@ int sc_commandDecode(int *command, int *operand, int value)
 		return ERROR;
 		
 	int temp_command, i;
-	temp_command = (value >> 7) & 127;
+	temp_command = (value >> 8); //& 127;
 	//printf("\n Cjmmand : %d\n\n", temp_command);
 	for (i = 0; i < NC; i++) {
 		if (temp_command == commands[i])
@@ -138,8 +142,8 @@ int sc_commandDecode(int *command, int *operand, int value)
 	if (i == NC) {
 		sc_regSet(UC, 1);
 		return ERROR;
-	}
-	
+	}else
+		sc_regSet(UC, 0);
 	*command = temp_command;
 	*operand = value & 127;
 
