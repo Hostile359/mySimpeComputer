@@ -16,7 +16,7 @@ typedef struct{
 
 typedef struct{
 	int adress;
-	int value;
+	//int value;
 	char name[2];
 } VARS;
 
