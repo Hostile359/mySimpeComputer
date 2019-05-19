@@ -1,1 +1,2 @@
-# mySimpeComputer
+# mySimpeComputer  
+Архитектура ЭВМ, СибГУТИ 
