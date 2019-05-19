@@ -2,14 +2,19 @@
 
 void _stop()
 {
-	alarm(0);
+	//alarm(0);
 	sc_regSet(IG, 1);
 }
 
-void CU()//добавить свой вариант
+void CU()
 {
-	sc_regInit();
-	sc_regSet(IG, 1);
+	//sc_regInit();
+	//sc_regSet(IG, 1);
+	sc_regSet(OV, 0);
+	sc_regSet(D0, 0);
+	sc_regSet(OM, 0);
+	sc_regSet(UC, 0);
+	print_term();//но это не точно
 	int tmp;
 	int temp_var;
 	if (sc_memoryGet(index, &temp_var) == -1)
@@ -19,12 +24,14 @@ void CU()//добавить свой вариант
 		_stop();
 	else
 		switch (com) {
-			case 0x10: //READ          дооделать чистку потокка и вывод(чтоб видно) в write
+			case 0x10: //READ   
 				alarm(0);
 				tcsetattr(STDIN_FILENO, TCSAFLUSH, &termios_default);
-				sc_regSet(IG, 1);
-				getc(stdin);
-				scanf("%x", &tmp);
+				printf(">> ");
+				scanf("%d", &tmp);
+				buffer[buff_counter].value = tmp;
+				buffer[buff_counter].in_out = 1;
+				buff_counter++;
 				if (tmp > 0xffff || tmp < -0xffff) {
 					sc_regSet(OV, 1);
 					_stop();
@@ -32,15 +39,18 @@ void CU()//добавить свой вариант
 						_stop();
 				else
 					index++;
-				sc_regSet(IG, 0);
-				rk_mytermrergtime(0, 0, 0, 0, 0);
-				setitimer(ITIMER_REAL, &nval, &oval);
+				if(value[3] == 0) {
+					rk_mytermrergtime(0, 0, 0, 0, 0);
+					setitimer(ITIMER_REAL, &nval, &oval);
+				}
 				break;
 			case 0x11://WRITE
 				if (sc_memoryGet(op, &tmp) == -1)
 					_stop();
 				else{
-					printf("%x\n", tmp);
+					buffer[buff_counter].value = tmp;
+					buffer[buff_counter].in_out = -1;
+					buff_counter++;
 					index++;
 				}
 				break;
@@ -67,21 +77,23 @@ void CU()//добавить свой вариант
 				break;
 			case 0x41://JNEG
 				if(accumulator < 0) {
-					if(op >= N || op < N) {
+					if(op >= N || op < 0) {
 						sc_regSet(OM, 1);
 						_stop();
 					}else
 						index = op;
-				}
+				}else
+					index++;
 				break;
 			case 0x42://JZ
 				if(accumulator == 0) {
-					if(op >= N || op < N) {
+					if(op >= N || op < 0) {
 						sc_regSet(OM, 1);
 						_stop();
 					}else
 						index = op;
-				}
+				}else
+					index++;
 				break;
 			case 0x43://HALT
 				_stop();

@@ -1,11 +1,25 @@
 OBJ = build/mySimpleComputer.o build/main.o build/myTerm.o build/myBigChars.o build/myReadkey.o build/func.o build/print.o build/cpu.o
+OBJ_SA = build/sat.o
+OBJ_BAS = build/bas.o
 CC = gcc
 CFLAGS  = -g3 -O0 -Wall -Werror -std=c99
 
-.PHONY: clean open gdb
+.PHONY: clean open gdb sa
 
-bin/prog: $(OBJ) bin res
+prog: $(OBJ) bin res
 	$(CC) $(CFLAGS) -o bin/prog $(OBJ) -lm
+	
+sat: $(OBJ_SA) bin res
+	$(CC) $(CFLAGS) -o bin/sat $(OBJ_SA)
+
+bas: $(OBJ_BAS) bin res
+	$(CC) $(CFLAGS) -o bin/bas $(OBJ_BAS)
+
+build/bas.o: basic/bas.c build
+	$(CC) $(CFLAGS) -o build/bas.o -c basic/bas.c
+	
+build/sat.o: as/sat.c build
+	$(CC) $(CFLAGS) -o build/sat.o -c as/sat.c
 
 build/mySimpleComputer.o: src/mySimpleComputer.c build
 	$(CC) $(CFLAGS) -o build/mySimpleComputer.o -c src/mySimpleComputer.c
@@ -38,12 +52,15 @@ bin:
 	mkdir -p bin
 
 res:
-	mkdir -p resources
-	touch resources/output.bin
-	
+	mkdir -p res
 clean :
 	rm -rf build bin resources
 open :
 	./bin/prog
 gdb :
 	gdb ./bin/prog
+sa	:
+	./bin/sat $(ARGS)
+	
+ba	:
+	./bin/bas $(ARGS)

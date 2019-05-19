@@ -69,7 +69,6 @@ int bc_printbigchar(int *a, int x, int y, enum colors c1, enum colors c2)
 int bc_setbigcharpos (int *big, int x, int y, int value)
 {
 	int index;
-	//printf("\n%d %d %d", x, y, value);
 	if ((x < 1) || (y < 1) || (x > 8) || (y > 8) || ((value != 0) && (value != 1)) )
 		return -1;
 		
@@ -83,9 +82,6 @@ int bc_setbigcharpos (int *big, int x, int y, int value)
 	int k = x * 8 + y;
 	
 	value = value << (k - 1);
-	//printf(" %d %d [%d] %d\n\n", k, value, index, big[index] );
-	//big[index] &= value;// (~big[index] || big[index]) && value;
-	//printf("\n%d\n\n", big[index]);
 	
 	if (value != 0)
 		big[index] |= value;

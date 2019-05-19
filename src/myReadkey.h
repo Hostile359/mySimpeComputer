@@ -14,6 +14,7 @@ enum keys{
 	_t,
 	_i,
 	_q,
+	_c,
 	F5,
 	F6,
 	UP,

@@ -5,8 +5,6 @@ void do_command(enum keys k)
 	int check = 0;
 	char file_name[50];
 	int sl = 0;
-	//struct termios termios_p;
-	//struct itimerval nval, oval;
 	
 	switch (k) {
 		case _l:
@@ -28,14 +26,7 @@ void do_command(enum keys k)
 				printf("Succsesfully\n\n");
 			break;
 		case _r:
-			//printf("r\n");
-			/*signal(SIGALRM, inst_counter);
-			alarm(1);*/
-
-				//value[3] = 0;
 				sc_regSet(IG, 0);
-				
-
 
 				rk_mytermrergtime(0, 0, 0, 0, 0);
 
@@ -49,22 +40,14 @@ void do_command(enum keys k)
 				setitimer(ITIMER_REAL, &nval, &oval);
 
 				while(1) {
-					if (index >= N - 1) {
+					sc_regGet(IG, &value[3]);
+					if (index >= N - 1 || value[3] == 1) {
 						alarm(0);
-						/*nval.it_interval.tv_sec = 0;
-						nval.it_interval.tv_usec = 0;
-						nval.it_value.tv_sec = 0;
-						nval.it_value.tv_usec = 0;
-
-						setitimer(ITIMER_REAL, &nval, &oval); //Сброс таймера
-						*/
-						
 						break;
 					}
 					//Каждый сигнал, генерируемый setitimer'ом уникален и требует предварительно повторного вызова signal
 					signal(SIGALRM, inst_counter);
-					
-					
+						
 					enum keys _temp;
 					rk_readkey(&_temp);
 					if(_temp == _i) {
@@ -80,23 +63,24 @@ void do_command(enum keys k)
 				//rk_mytermrergtime(0, 1, 0, 0, 1);
 				
 				tcsetattr(STDIN_FILENO, TCSAFLUSH, &termios_default);
-				
-				//enum keys _temp;
-				//rk_readkey(&_temp);
-				//fflush(stdin);
 			
 			break;
 		case _t:
 			inst_counter();
 			break;
 		case _i:
-			//printf("i\n");
 			alarm(0);
 			signal(SIGUSR1, _reset);
 			raise (SIGUSR1);
 			break;
 		case _q:
-			printf("q\n");
+			printf("Enter new value: \n");
+			int tmp;
+			scanf("%x", &tmp);
+			arr[index] = tmp;
+			break;
+		case _c:
+			buff_clear();
 			break;
 		case F5:
 			printf("Enter new accumulator: ");
@@ -121,52 +105,43 @@ void do_command(enum keys k)
 			index = in_c;
 			break;
 		case UP:
-			//printf("up\n");
 			if (index - 10 >= 0)
 				index -= 10;
 			else
 				index += 90;
 			break;
 		case DOWN:
-			//printf("down\n");
 			if (index + 10 < 100)
 				index += 10;
 			else
 				index -= 90;
 			break;
 		case LEFT:
-			//printf("left\n");
 			if (index % 10 != 0)
 				index--;
 			else
 				index += 9;
 			break;
 		case RIGHT:
-			//printf("right\n");
 			if (index % 10 != 9)
 				index++;
 			else
 				index -= 9;
 			break;
 		case ENTER://fix мб откатт
-			printf("Enter new value: \n");
+			printf("Enter new command and operand: \n");
 			int temp = 0, temp1, temp2;
 			scanf("%2x%2x", &temp1, &temp2);
-			//arr[index] = temp;
-			sc_commandEncode(temp1, temp2, &temp);
-			sc_memorySet(index, temp);
+			if (sc_commandEncode(temp1, temp2, &temp) == 1)
+				sc_memorySet(index, temp);
 			
 			break;
 	}
-	//printf("Press any key to continue...");
-	//fflush(stdout);
-	//rk_readkey(&k);
 	return;
 }
 
 void inst_counter()
 {
-	//index++;
 	CU();
     print_term();
 }
@@ -176,10 +151,15 @@ void _reset(){
 	sc_regInit();
 	index = 0;
 	sc_regSet(IG, 1);
-	/*value[0] = 0;
-	value[1] = 0;
-	value[2] = 0;
-	value[3] = 1;
-	value[4] = 0;*/
-	//value[3] = 1;
+	buff_clear();
+	accumulator = 0;
+}
+
+void buff_clear()
+{
+	buff_counter = 0;
+	for(int h = 0; h < BUF_SIZE; h++) {
+		buffer[h].in_out = 0;
+		buffer[h].value = 0;
+	}
 }

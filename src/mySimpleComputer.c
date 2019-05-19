@@ -97,8 +97,10 @@ int sc_regSet(int registr, int value)
 
 int sc_regGet(int registr, int *value)
 {
-	if (registr < 0 || registr > 4)
+	if (registr < 0 || registr > 4) {
+		sc_regSet(OV, 1);
 		return ERROR;
+	}
 	
 	*value = (flag >> registr) & 1;
 	
@@ -107,8 +109,10 @@ int sc_regGet(int registr, int *value)
 
 int sc_commandEncode(int command, int operand, int *value)
 {
-	if (*value >> 14 != 0)
+	if (command >> 7 != 0 || operand >> 7 != 0) {
+		sc_regSet(OV, 1);
 		return ERROR;
+	}
 	int i;
 	for (i = 0; i < NC; i++) {
 		if (command == commands[i])	break;
@@ -119,7 +123,7 @@ int sc_commandEncode(int command, int operand, int *value)
 		return ERROR;	
 	}
 	
-	command <<= 8;
+	command <<= 7;
 	command |= operand;
 	*value = command;
 	
@@ -128,17 +132,17 @@ int sc_commandEncode(int command, int operand, int *value)
 
 int sc_commandDecode(int *command, int *operand, int value)
 {
-	if (value >> 14 != 0)
+	if (value >> 14 != 0) {
+		sc_regSet(OV, 1);
 		return ERROR;
+	}
 		
 	int temp_command, i;
-	temp_command = (value >> 8); //& 127;
-	//printf("\n Cjmmand : %d\n\n", temp_command);
+	temp_command = (value >> 7) & 127;
 	for (i = 0; i < NC; i++) {
 		if (temp_command == commands[i])
 			break;
 	}
-	//printf("\t%d     %d\n\n", i, NC);
 	if (i == NC) {
 		sc_regSet(UC, 1);
 		return ERROR;
